@@ -111,13 +111,35 @@ if file_monitoring and file_permalink:
                     help="Select which columns you want to include in the downloaded update file."
                 )
 
+                # === Step 6.5: Choose export format ===
+                export_format = st.radio(
+                    "📤 Choose export file format:",
+                    options=["CSV", "Excel"],
+                    horizontal=True
+                )
+
+
                 # === Step 7: Download final output ===
                 filtered_export_df = result_df[selected_columns]
+
+                if export_format == "CSV":
+                    export_data = filtered_export_df.to_csv(index=False, encoding="utf-8-sig", date_format="%Y-%m-%d")
+                    export_mime = "text/csv"
+                    export_filename = "srri_updates_needed.csv"
+                else:
+                    import io
+                    output = io.BytesIO()
+                    with pd.ExcelWriter(output, engine='xlsxwriter') as writer:
+                        filtered_export_df.to_excel(writer, index=False, sheet_name='SRRI Mismatches')
+                    export_data = output.getvalue()
+                    export_mime = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+                    export_filename = "srri_updates_needed.xlsx"
+
                 st.download_button(
-                    label="📥 Download SRRI Update File",
-                    data=filtered_export_df.to_csv(index=False, encoding="utf-8-sig", date_format="%Y-%m-%d"),
-                    file_name="srri_updates_needed.csv",
-                    mime="text/csv"
+                    label=f"📥 Download SRRI Update File ({export_format})",
+                    data=export_data,
+                    file_name=export_filename,
+                    mime=export_mime
                 )
 
         except Exception as e:
