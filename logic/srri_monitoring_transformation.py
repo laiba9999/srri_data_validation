@@ -199,7 +199,7 @@ def process_monitoring_file(file):
     )
 
     # === STEP 14: Export ===
-    summary_df.to_csv("output/srri_monitoring_tsfm.csv", index=False,date_format="%Y-%m-%d")
+    summary_df.to_csv("output/srri_monitoring_tsfm.csv", index=False, encoding="utf-8-sig", date_format="%Y-%m-%d")
     print(summary_df.dtypes)
 
 
