@@ -1,4 +1,4 @@
-FUND,SUB_FUND,SHARE_CLASS,IDENTIFIER,CURRENCY,LAST_VALIDATED_DOCUMENT,PREVIOUS_SRRI,LATEST_SRRI,WEEK_OF_CHANGE,LAST_16_WEEKS_STABLE,ANY_16_WEEKS_STABLE
+﻿FUND,SUB_FUND,SHARE_CLASS,IDENTIFIER,CURRENCY,LAST_VALIDATED_DOCUMENT,PREVIOUS_SRRI,LATEST_SRRI,WEEK_OF_CHANGE,LAST_16_WEEKS_STABLE,ANY_16_WEEKS_STABLE
 FIRST TRUST GLOBAL FUNDS PUBLIC LIMITED COMPANY,First Trust RBA American Industrial Renaissance UCITS ETF,First Trust RBA American Industrial Renaissance UCITS ETF Class B DIST,firsttrustrbaamericanindustrialrenaissancebdistusd,USD,,7,7,None,True,True
 FIRST TRUST GLOBAL FUNDS PUBLIC LIMITED COMPANY,First Trust RBA American Industrial Renaissance UCITS ETF,First Trust RBA American Industrial Renaissance UCITS ETF Class A ACCU,firsttrustrbaamericanindustrialrenaissanceaaccusd,USD,,7,7,None,True,True
 FIRST TRUST GLOBAL FUNDS PUBLIC LIMITED COMPANY,First Trust Bloomberg Global R&D Leaders UCITS ETF,First Trust Bloomberg Global R&D Leaders UCITS ETF Class A ACCU,firsttrustbloombergglobalrdleadersaaccusd,USD,,6,6,None,True,True

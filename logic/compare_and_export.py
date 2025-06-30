@@ -40,8 +40,13 @@ def compare_srri_values(monitoring_df, permalink_df, output_file="output/srri_up
     permalink_df["KIID_SRRI"] = pd.to_numeric(permalink_df["KIID_SRRI"], errors="coerce")
     monitoring_df["LATEST_SRRI"] = pd.to_numeric(monitoring_df["LATEST_SRRI"], errors="coerce")
 
+
     # === STEP 5: Filter monitoring to stable SRRI records only ===
     stable_monitoring_df = monitoring_df[monitoring_df["ANY_16_WEEKS_STABLE"] == True]
+
+        # === STEP 5.5: Filter out rows in permalink_df where KIID_ISIN_MISMATCH is True ===
+    if "KIID_ISIN_MISMATCH" in permalink_df.columns:
+        permalink_df = permalink_df[permalink_df["KIID_ISIN_MISMATCH"] != True]
 
     # === STEP 6: Merge on IDENTIFIER (inner join) ===
     merged_df = pd.merge(
@@ -54,20 +59,32 @@ def compare_srri_values(monitoring_df, permalink_df, output_file="output/srri_up
     # === STEP 7: Drop rows where either SRRI value is missing (validation) ===
     merged_df = merged_df.dropna(subset=["KIID_SRRI", "LATEST_SRRI"])
 
+        # === STEP 7.5: Keep only rows where KIID_ISIN_MISMATCH is False or missing ===
+    if "KIID_ISIN_MISMATCH" in merged_df.columns:
+        merged_df = merged_df[merged_df["KIID_ISIN_MISMATCH"] == False]
+
+
     # === STEP 8: Find SRRI mismatches ===
     mismatches_df = merged_df[merged_df["KIID_SRRI"] != merged_df["LATEST_SRRI"]]
 
     # === STEP 9: Keep only relevant columns (if present) ===
     preferred_order = [
-        "FUND_NAME", "SHARE_CLASS", "ISIN", "KIID_PDF_URL", "FACT_SHEET_URL",
+        "FUND_NAME", "SUB_FUND", "SHARE_CLASS", "ISIN", "KIID_PDF_URL", "FACT_SHEET_URL",
         "IDENTIFIER", "KIID_SRRI", "LATEST_SRRI", "WEEK_OF_CHANGE",
         "MANAGEMENT_FEE", "SHARE_CLASS_INCEPTION_DATE"
     ]
     final_columns = [col for col in preferred_order if col in mismatches_df.columns]
     result_df = mismatches_df[final_columns]
 
+    # === STEP 9.1: Replace incorrect characters in SHARE_CLASS and SUB_FUND ===
+    # === STEP 9.1: Replace '¬Æ' with '®' across all string columns ===
+    for col in result_df.select_dtypes(include="object").columns:
+        result_df[col] = result_df[col].str.replace("¬Æ", "®", regex=False)
+
+
     # === STEP 10: Export mismatches ===
-    result_df.to_csv(output_file, index=False, date_format="%Y-%m-%d")
+    result_df.to_csv(output_file, index=False, encoding="utf-8-sig", date_format="%Y-%m-%d")
+    #result_df.to_csv(output_file, index=False, date_format="%Y-%m-%d")
     print(f"✅ Mismatch report saved to: {output_file} ({len(result_df)} rows)")
     print(result_df.dtypes)
 
@@ -75,4 +92,4 @@ def compare_srri_values(monitoring_df, permalink_df, output_file="output/srri_up
 
 
 # Example usage
-# compare_srri_values("output/srri_monitoring_tsfm_v4.csv", "output/permalink_tsfm_v3.csv")
+# compare_srri_values("output/srri_monitoring_tsfm.csv", "output/permalink_tsfm.csv")
